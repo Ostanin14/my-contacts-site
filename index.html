@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Способы связи</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body {
+            background: linear-gradient(145deg, #0b0f1a 0%, #141b2b 100%);
+            min-height: 100vh;
+            color: #eef2f8;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .app {
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(22, 30, 45, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 56px;
+            padding: 30px 30px 20px;
+            box-shadow: 0 25px 50px -8px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.04);
+        }
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 14px 20px;
+            margin-bottom: 40px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: #9aa9c7;
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.25s ease;
+            background: rgba(255, 255, 255, 0.02);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.02);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-btn i { font-size: 1rem; opacity: 0.7; }
+        .nav-btn:hover { background: rgba(255, 255, 255, 0.07); color: #d6e2ff; transform: translateY(-2px); }
+        .nav-btn.active { background: rgba(70, 130, 255, 0.15); color: #aac3ff; box-shadow: 0 0 0 1px rgba(70, 130, 255, 0.3); }
+        .page { display: none; animation: fadeSlide 0.5s; padding: 8px 4px 20px; }
+        .page.active { display: block; }
+        @keyframes fadeSlide { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+        .hero { text-align: center; padding: 30px 10px 20px; }
+        .hero h1 { font-size: 3.2rem; font-weight: 700; background: linear-gradient(135deg, #c0d6ff, #7aa3ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero p { font-size: 1.25rem; color: #b2c4e8; max-width: 600px; margin: 0 auto; line-height: 1.6; opacity: 0.9; }
+        .hero-icon { font-size: 4.5rem; margin: 20px 0 10px; color: #5f8aff; filter: drop-shadow(0 8px 18px #2a6eff40); animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px; margin: 20px 0 10px; }
+        .review-card { background: rgba(255, 255, 255, 0.03); border-radius: 28px; padding: 24px 20px; backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.04); transition: 0.3s; }
+        .review-card:hover { background: rgba(255, 255, 255, 0.06); transform: scale(1.01); }
+        .review-card .name { font-weight: 600; font-size: 1.2rem; color: #d0dfff; }
+        .review-card .stars { color: #f7b731; letter-spacing: 3px; margin-bottom: 10px; }
+        .review-card .text { color: #bfd0f0; line-height: 1.5; }
+        .contacts-wrapper { display: flex; flex-direction: column; gap: 40px; }
+        .contact-section h2 { font-size: 1.8rem; font-weight: 500; margin-bottom: 20px; color: #c6d8ff; border-left: 4px solid #4d7aff; padding-left: 18px; }
+        .phone-grid { display: flex; flex-direction: column; gap: 18px; margin-top: 8px; }
+        .phone-item { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; background: rgba(0,0,0,0.2); padding: 14px 24px; border-radius: 60px; border: 1px solid rgba(255,255,255,0.03); transition: 0.2s; cursor: pointer; user-select: none; }
+        .phone-item:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); }
+        .phone-number { font-size: 1.25rem; font-weight: 500; color: #e3edff; min-width: 170px; pointer-events: none; }
+        .phone-operator { color: #b0c8f0; background: rgba(255,255,255,0.04); padding: 2px 16px; border-radius: 30px; font-size: 0.9rem; pointer-events: none; }
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 0.85rem; padding: 5px 16px; border-radius: 50px; background: rgba(0,0,0,0.3); pointer-events: none; }
+        .status-badge i { font-size: 0.75rem; }
+        .badge-green { background: #0f6b3a; color: #b0f0c0; }
+        .badge-orange { background: #8f5a1a; color: #ffd699; }
+        .badge-red { background: #7a2a2a; color: #ffb0b0; }
+        .notice { margin: 25px 0 10px; background: rgba(255,215,0,0.04); border-left: 3px solid #d4a02b; padding: 12px 22px; border-radius: 40px; color: #d3dfff; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .notice i { color: #f5c542; font-size: 1.2rem; }
+        .social-grid { display: flex; flex-wrap: wrap; gap: 18px 24px; margin: 12px 0 10px; }
+        .social-card { background: rgba(0,0,0,0.2); backdrop-filter: blur(4px); padding: 14px 28px; border-radius: 60px; display: inline-flex; align-items: center; gap: 14px; transition: 0.25s; border: 1px solid rgba(255,255,255,0.02); color: #d2e0ff; font-weight: 500; cursor: pointer; }
+        .social-card i { font-size: 1.6rem; width: 28px; color: #8bb2ff; }
+        .social-card:hover { background: rgba(255,255,255,0.07); transform: translateY(-4px); box-shadow: 0 10px 22px -10px #1f4bcf40; }
+        .social-card .tag { font-size: 0.75rem; background: rgba(255,255,255,0.04); padding: 0 12px; border-radius: 30px; color: #9bb1d9; pointer-events: none; }
+        .social-card .copy-hint { font-size: 0.7rem; color: #6a7ea3; margin-left: 4px; pointer-events: none; }
+        .info-block { max-width: 700px; margin: 10px auto; background: rgba(0,0,0,0.15); padding: 30px 32px; border-radius: 48px; border: 1px solid rgba(255,255,255,0.02); }
+        .info-block p { font-size: 1.1rem; line-height: 1.7; color: #c8d8fc; }
+        .info-block i { color: #6a92ff; margin-right: 10px; }
+        .footer { margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.04); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px 20px; font-size: 0.9rem; color: #8497bb; }
+        .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+        .footer-links a { color: #8fa5d0; text-decoration: none; transition: 0.2s; border-bottom: 1px dotted transparent; cursor: pointer; }
+        .footer-links a:hover { color: #bed6ff; border-color: #6a8eff; }
+        .footer .protected { display: flex; align-items: center; gap: 8px; color: #a1b6df; }
+        .footer .protected i { color: #5b8aff; }
+        .copy-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(30,40,60,0.95); backdrop-filter: blur(10px); padding: 12px 30px; border-radius: 60px; color: #c6d8ff; font-weight: 500; border: 1px solid rgba(255,255,255,0.06); z-index: 9999; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
+        .copy-toast.show { opacity: 1; }
+        .copy-toast i { color: #5b8aff; margin-right: 10px; }
+        @media (max-width: 700px) { .app { padding: 20px 16px; } .hero h1 { font-size: 2.4rem; } .phone-item { border-radius: 30px; padding: 12px 18px; } .nav-btn { font-size: 0.95rem; padding: 8px 14px; } }
+    </style>
+</head>
+<body>
+<div class="app">
+
+    <!-- НАВИГАЦИЯ (БЕЗ КНОПКИ ВХОДА) -->
+    <div class="nav" id="navBar">
+        <button class="nav-btn active" data-page="main"><i class="fas fa-home"></i> Главный</button>
+        <button class="nav-btn" data-page="reviews"><i class="fas fa-star"></i> Отзывы</button>
+        <button class="nav-btn" data-page="contacts"><i class="fas fa-address-book"></i> Контакты</button>
+        <button class="nav-btn" data-page="info"><i class="fas fa-circle-info"></i> Инфо</button>
+    </div>
+
+    <!-- СТРАНИЦЫ -->
+    <div id="page-main" class="page active">
+        <div class="hero">
+            <div class="hero-icon"><i class="fas fa-comment-dots"></i></div>
+            <h1>Способы связи</h1>
+            <p>Всегда на связи. Контакты, отзывы и важная информация — в одном месте. Быстро, удобно, прозрачно.</p>
+            <p style="margin-top: 24px; font-size: 1rem; opacity: 0.6;"><i class="fas fa-arrow-down"></i> выберите раздел в меню</p>
+        </div>
+    </div>
+
+    <div id="page-reviews" class="page">
+        <h2 style="font-weight: 400; margin-bottom: 16px; color: #c6d8ff;"><i class="fas fa-quote-right" style="margin-right: 12px;"></i>Что говорят люди</h2>
+        <div class="reviews-grid">
+            <div class="review-card"><div class="name">Андрей К.</div><div class="stars">★★★★★</div><div class="text">Очень удобно, все контакты собраны. Созвонились быстро, спасибо!</div></div>
+            <div class="review-card"><div class="name">Екатерина М.</div><div class="stars">★★★★☆</div><div class="text">Красивый сайт, анимация приятная. Номера рабочие, всё чётко.</div></div>
+            <div class="review-card"><div class="name">Сергей В.</div><div class="stars">★★★★★</div><div class="text">Отличный сервис, информацию нашёл мгновенно. Рекомендую.</div></div>
+        </div>
+    </div>
+
+    <div id="page-contacts" class="page">
+        <div class="contacts-wrapper">
+            <div class="contact-section">
+                <h2><i class="fas fa-phone-alt" style="margin-right: 12px;"></i>Телефоны</h2>
+                <div class="phone-grid">
+                    <div class="phone-item" data-phone="+79098986853">
+                        <span class="phone-number">+7 909 898-6853</span>
+                        <span class="phone-operator"><i class="fas fa-sim-card"></i> BEELINE</span>
+                        <span class="status-badge badge-green"><i class="fas fa-circle"></i> ОСНОВНОЙ</span>
+                    </div>
+                    <div class="phone-item" data-phone="+79142077203">
+                        <span class="phone-number">+7 914 207-7203</span>
+                        <span class="phone-operator"><i class="fas fa-sim-card"></i> MTS</span>
+                        <span class="status-badge badge-orange"><i class="fas fa-pause"></i> ПРИОСТАНОВЛЕН</span>
+                    </div>
+                    <div class="phone-item" data-phone="+79241023301">
+                        <span class="phone-number">+7 924 102-3301</span>
+                        <span class="phone-operator"><i class="fas fa-sim-card"></i> MEGAFON</span>
+                        <span class="status-badge badge-red"><i class="fas fa-ban"></i> НЕ РАБОТАЕТ</span>
+                    </div>
+                    <div class="phone-item" data-phone="+79243043352">
+                        <span class="phone-number">+7 924 304-3352</span>
+                        <span class="phone-operator"><i class="fas fa-sim-card"></i> MEGAFON</span>
+                        <span class="status-badge badge-red"><i class="fas fa-ban"></i> НЕ РАБОТАЕТ</span>
+                    </div>
+                </div>
+                <div class="notice">
+                    <i class="fas fa-shield-alt"></i>
+                    <span><strong>Важно:</strong> Звоните только на рабочие номера (отмечены зелёным). Все номера проверены, не являются мошенническими и принадлежат официальным представителям. Безопасность гарантирована.</span>
+                </div>
+            </div>
+
+            <div class="contact-section">
+                <h2><i class="fas fa-share-alt" style="margin-right: 12px;"></i>Социальные сети</h2>
+                <div class="social-grid">
+                    <div class="social-card" data-copy="https://vk.com/artemostanin14" data-label="VK">
+                        <i class="fab fa-vk"></i> ВКонтакте <span class="tag">vk.com</span>
+                        <span class="copy-hint"><i class="far fa-copy"></i></span>
+                    </div>
+                    <div class="social-card" data-copy="https://discord.com/users/geniusreason" data-label="Discord">
+                        <i class="fab fa-discord"></i> Discord <span class="tag">@geniusreason</span>
+                        <span class="copy-hint"><i class="far fa-copy"></i></span>
+                    </div>
+                    <div class="social-card" data-copy="https://wa.me/79098986853" data-label="WhatsApp">
+                        <i class="fab fa-whatsapp"></i> WhatsApp <span class="tag">MAX</span>
+                        <span class="copy-hint"><i class="far fa-copy"></i></span>
+                    </div>
+                    <div class="social-card" data-copy="https://t.me/example" data-label="Telegram">
+                        <i class="fab fa-telegram"></i> Telegram <span class="tag">ПРИОСТАНОВЛЕН</span>
+                        <span class="copy-hint"><i class="far fa-copy"></i></span>
+                    </div>
+                    <div class="social-card" data-copy="https://www.tiktok.com/@non_xy3" data-label="TikTok">
+                        <i class="fab fa-tiktok"></i> TikTok <span class="tag">@non_xy3</span>
+                        <span class="copy-hint"><i class="far fa-copy"></i></span>
+                    </div>
+                </div>
+                <p style="margin-top: 16px; font-size: 0.9rem; opacity: 0.5; padding-left: 6px;"><i class="fas fa-lock"></i> Аккаунты верифицированы</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-info" class="page">
+        <div class="info-block">
+            <p><i class="fas fa-circle-info"></i> Этот сайт создан для быстрого доступа ко всем способам связи. Здесь собраны официальные номера, соцсети и отзывы реальных людей.</p>
+            <p style="margin-top: 20px;"><i class="fas fa-check-circle" style="color: #5b8aff;"></i> Все данные актуальны на текущий момент. Мы заботимся о вашем комфорте и безопасности.</p>
+            <p style="margin-top: 20px; background: rgba(0,0,0,0.1); padding: 14px 18px; border-radius: 40px;"><i class="fas fa-asterisk" style="color: #f5c542;"></i> Если у вас остались вопросы — свяжитесь через один из рабочих каналов.</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="protected"><i class="fas fa-lock"></i> Все защищено и конфиденциально</div>
+        <div class="footer-links">
+            <a href="#" onclick="alert('🔒 Защищено: все данные передаются по защищённому протоколу.'); return false;"><i class="fas fa-shield-alt"></i> Защищено</a>
+            <a href="#" onclick="alert('🤫 Конфиденциально: ваши данные не передаются третьим лицам.'); return false;"><i class="fas fa-user-secret"></i> Конфиденциально</a>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="copy-toast" id="copyToast"><i class="fas fa-check-circle"></i> <span id="toastMessage">Скопировано!</span></div>
+
+<script>
+    (function() {
+        // === НАВИГАЦИЯ ===
+        var navBtns = document.querySelectorAll('.nav-btn');
+        var pages = {
+            main: document.getElementById('page-main'),
+            reviews: document.getElementById('page-reviews'),
+            contacts: document.getElementById('page-contacts'),
+            info: document.getElementById('page-info')
+        };
+
+        function setActive(pageId) {
+            for (var p in pages) { if (pages[p]) pages[p].classList.remove('active'); }
+            if (pages[pageId]) pages[pageId].classList.add('active');
+            for (var i = 0; i < navBtns.length; i++) {
+                navBtns[i].classList.remove('active');
+                if (navBtns[i].dataset.page === pageId) navBtns[i].classList.add('active');
+            }
+        }
+
+        for (var i = 0; i < navBtns.length; i++) {
+            navBtns[i].addEventListener('click', function() {
+                var page = this.dataset.page;
+                if (page) setActive(page);
+            });
+        }
+
+        // === КОПИРОВАНИЕ ===
+        var toast = document.getElementById('copyToast');
+        var toastMsg = document.getElementById('toastMessage');
+        var toastTimeout;
+
+        function showToast(msg) {
+            clearTimeout(toastTimeout);
+            toastMsg.textContent = msg;
+            toast.classList.add('show');
+            toastTimeout = setTimeout(function() { toast.classList.remove('show'); }, 2000);
+        }
+
+        function copyText(text, label) {
+            if (!text) return;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function() {
+                    showToast('✅ ' + (label || 'Ссылка') + ' скопирована: ' + text);
+                }).catch(function() { fallbackCopy(text, label); });
+            } else {
+                fallbackCopy(text, label);
+            }
+        }
+
+        function fallbackCopy(text, label) {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast('✅ ' + (label || 'Ссылка') + ' скопирована: ' + text);
+            } catch (e) {
+                alert('Не удалось скопировать: ' + text);
+            }
+            document.body.removeChild(ta);
+        }
+
+        // Номера
+        var phoneItems = document.querySelectorAll('.phone-item');
+        for (var i = 0; i < phoneItems.length; i++) {
+            phoneItems[i].onclick = function() {
+                var phone = this.dataset.phone;
+                if (phone) copyText(phone, 'Номер');
+            };
+        }
+
+        // Соцсети
+        var socialCards = document.querySelectorAll('.social-card');
+        for (var i = 0; i < socialCards.length; i++) {
+            socialCards[i].onclick = function(e) {
+                var url = this.dataset.copy;
+                var label = this.dataset.label || 'Ссылка';
+                if (url) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    copyText(url, label);
+                }
+            };
+        }
+    })();
+</script>
+
+</body>
+</html>
